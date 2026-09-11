@@ -1,4 +1,5 @@
-# Render Blueprint for CredenceScan. Deploy via Render's "New +" -> "Blueprint"
+# Render Blueprint for Financial Document Scanner. Deploy via Render's
+# "New +" -> "Blueprint"
 # and point it at this repo. Verify these keys against Render's current
 # Blueprint docs before relying on this — the schema has changed over time
 # and this hasn't been run against a live Render account.
@@ -9,7 +10,7 @@
 # because neither URL is known until after the first deploy.
 services:
   - type: web
-    name: credencescan-api
+    name: financial-document-scanner-api
     runtime: python
     plan: free
     rootDir: backend
@@ -40,8 +41,8 @@ services:
         sync: false
 
   - type: web
-    name: credencescan-frontend
-    env: static
+    name: financial-document-scanner-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist

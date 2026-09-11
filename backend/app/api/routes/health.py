@@ -8,4 +8,4 @@ router = APIRouter(tags=["health"])
 @router.get("/health")
 @limiter.limit("30/minute")
 async def health_check(request: Request):
-    return {"status": "ok", "service": "credencescan-api"}
+    return {"status": "ok", "service": "financial-document-scanner-api"}

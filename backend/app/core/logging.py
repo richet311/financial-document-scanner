@@ -6,7 +6,7 @@ from app.core.config import settings
 
 def configure_logging() -> logging.Logger:
     """Configure structured console logging so errors are visible in the terminal."""
-    logger = logging.getLogger("credencescan")
+    logger = logging.getLogger("financial-document-scanner")
 
     if logger.handlers:
         return logger

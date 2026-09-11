@@ -7,7 +7,7 @@ import UploadForm from './components/UploadForm.vue'
 <template>
   <main class="app">
     <header>
-      <h1>CredenceScan</h1>
+      <h1>Financial Document Scanner</h1>
       <p class="tagline">A privacy-first assistant for reading and understanding financial documents.</p>
     </header>
 

@@ -3,7 +3,7 @@ def test_health_check(client):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["service"] == "credencescan-api"
+    assert body["service"] == "financial-document-scanner-api"
 
 
 def test_security_headers_present(client):

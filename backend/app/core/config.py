@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    app_name: str = "CredenceScan API"
+    app_name: str = "Financial Document Scanner API"
     environment: str = "development"
 
     # Comma-separated list of allowed origins for CORS, e.g. "http://localhost:5173"
