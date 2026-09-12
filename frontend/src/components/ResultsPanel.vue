@@ -116,7 +116,7 @@ function formatFieldName(key) {
 
 .confidence-fill {
   height: 100%;
-  background: var(--color-primary);
+  background: var(--color-accent);
   border-radius: 999px;
 }
 

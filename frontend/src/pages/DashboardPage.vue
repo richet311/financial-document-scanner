@@ -266,8 +266,8 @@ const ICONS = {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
   align-items: center;
   justify-content: center;
 }
@@ -323,7 +323,7 @@ const ICONS = {
 
 .bar-fill {
   height: 100%;
-  background: var(--color-primary);
+  background: var(--color-accent);
   border-radius: 999px;
 }
 

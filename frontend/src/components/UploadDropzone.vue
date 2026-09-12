@@ -63,8 +63,8 @@ function onDrop(event) {
 
 .dropzone:hover,
 .dropzone.dragging {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
 }
 
 .hidden-input {
@@ -72,7 +72,7 @@ function onDrop(event) {
 }
 
 .dropzone-icon {
-  color: var(--color-primary);
+  color: var(--color-accent);
   margin: 0 auto var(--space-3);
   justify-content: center;
 }

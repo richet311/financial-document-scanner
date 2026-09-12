@@ -12,11 +12,8 @@ const ICONS = {
 <template>
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">FD</div>
-      <div>
-        <div class="brand-name">Financial Document Scanner</div>
-        <div class="brand-tag">Document intelligence demo</div>
-      </div>
+      <div class="brand-name">Financial<br />Document Scanner</div>
+      <div class="brand-tag">Document intelligence demo</div>
     </div>
 
     <nav class="nav">
@@ -49,29 +46,18 @@ const ICONS = {
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  flex-shrink: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .brand-name {
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.25;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
 }
 
 .brand-tag {

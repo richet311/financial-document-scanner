@@ -85,6 +85,7 @@ async function submitUpload() {
 <template>
   <div class="scan-page">
     <section class="hero">
+      <span class="hero-eyebrow">Document intelligence</span>
       <h1>Turn financial documents into clear, actionable insights</h1>
       <p class="hero-subtitle">
         Upload a pay stub, bank statement, or budget sheet and see extraction,
@@ -134,16 +135,31 @@ async function submitUpload() {
 }
 
 .hero {
-  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface));
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-7) var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-3);
 }
 
 .hero h1 {
-  font-size: 2rem;
-  max-width: 24ch;
-  margin-bottom: var(--space-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2.6rem;
+  max-width: 20ch;
+  margin-bottom: var(--space-4);
+  color: var(--color-primary);
 }
 
 .hero-subtitle {
@@ -188,8 +204,8 @@ async function submitUpload() {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
   align-items: center;
   justify-content: center;
   margin-bottom: var(--space-3);
