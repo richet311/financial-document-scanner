@@ -24,11 +24,16 @@ function formatFieldName(key) {
         <span class="badge badge-neutral doc-type">
           {{ (result.document_type || 'unknown').replaceAll('_', ' ') }}
         </span>
-        <span v-if="result.confidence" class="confidence">
-          {{ (result.confidence * 100).toFixed(1) }}% confidence
-        </span>
       </div>
       <span class="filename">{{ result.filename }}</span>
+    </div>
+
+    <div v-if="result.confidence" class="confidence-row">
+      <span class="confidence-label">Classifier confidence</span>
+      <div class="confidence-track">
+        <div class="confidence-fill" :style="{ width: result.confidence * 100 + '%' }"></div>
+      </div>
+      <span class="confidence-value">{{ (result.confidence * 100).toFixed(1) }}%</span>
     </div>
 
     <div v-if="Object.keys(result.fields || {}).length" class="fields-grid">
@@ -85,6 +90,40 @@ function formatFieldName(key) {
 .filename {
   font-size: 0.82rem;
   color: var(--color-text-faint);
+  font-family: var(--font-mono);
+}
+
+.confidence-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.confidence-label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.confidence-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+}
+
+.confidence-value {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .fields-grid {
@@ -151,6 +190,7 @@ function formatFieldName(key) {
 
 .raw-text pre {
   white-space: pre-wrap;
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   background: var(--color-surface-muted);
   border-radius: var(--radius-sm);

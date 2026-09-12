@@ -71,6 +71,15 @@ const averageConfidence = computed(() => {
 function formatTime(isoString) {
   return new Date(isoString).toLocaleString()
 }
+
+const ICONS = {
+  document:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2" /><line x1="8" y1="8" x2="16" y2="8" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="8" y1="16" x2="13" y2="16" /></svg>',
+  layers:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 L21 8 L12 13 L3 8 Z" /><path d="M3 13 L12 18 L21 13" /><path d="M3 17.5 L12 22.5 L21 17.5" /></svg>',
+  chart:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20" /><rect x="6" y="13" width="3" height="7" fill="currentColor" stroke="none" /><rect x="11" y="9" width="3" height="11" fill="currentColor" stroke="none" /><rect x="16" y="5" width="3" height="15" fill="currentColor" stroke="none" /></svg>',
+}
 </script>
 
 <template>
@@ -109,17 +118,26 @@ function formatTime(isoString) {
 
       <div class="stats-grid">
         <div class="card stat-card">
-          <div class="stat-label">Total scans</div>
-          <div class="stat-value">{{ totalScans }}</div>
+          <span class="stat-icon icon" v-html="ICONS.document"></span>
+          <div>
+            <div class="stat-label">Total scans</div>
+            <div class="stat-value">{{ totalScans }}</div>
+          </div>
         </div>
         <div class="card stat-card">
-          <div class="stat-label">Document types seen</div>
-          <div class="stat-value">{{ Object.keys(typeCounts).length }}</div>
+          <span class="stat-icon icon" v-html="ICONS.layers"></span>
+          <div>
+            <div class="stat-label">Document types seen</div>
+            <div class="stat-value">{{ Object.keys(typeCounts).length }}</div>
+          </div>
         </div>
         <div class="card stat-card">
-          <div class="stat-label">Avg. classifier confidence</div>
-          <div class="stat-value">
-            {{ averageConfidence != null ? averageConfidence.toFixed(1) + '%' : '—' }}
+          <span class="stat-icon icon" v-html="ICONS.chart"></span>
+          <div>
+            <div class="stat-label">Avg. classifier confidence</div>
+            <div class="stat-value">
+              {{ averageConfidence != null ? averageConfidence.toFixed(1) + '%' : '—' }}
+            </div>
           </div>
         </div>
       </div>
@@ -168,7 +186,7 @@ function formatTime(isoString) {
 }
 
 .page-header h1 {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin-bottom: var(--space-2);
 }
 
@@ -239,6 +257,24 @@ function formatTime(isoString) {
 
 .stat-card {
   padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon :deep(svg) {
+  width: 18px;
+  height: 18px;
 }
 
 .stat-label {

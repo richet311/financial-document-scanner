@@ -38,7 +38,13 @@ function onDrop(event) {
       class="hidden-input"
       @change="onFileChange"
     />
-    <div class="dropzone-icon">⬆</div>
+    <div class="dropzone-icon icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 18a4 4 0 0 1-1-7.9A5 5 0 0 1 16 8a4.5 4.5 0 0 1 1 8.9" />
+        <path d="M12 12v7" />
+        <path d="M9.5 15.5 12 13l2.5 2.5" />
+      </svg>
+    </div>
     <p class="dropzone-title">Drop a document here, or click to browse</p>
     <p class="dropzone-hint">PDF, PNG, or JPEG — never stored, processed in memory only</p>
   </div>
@@ -66,9 +72,14 @@ function onDrop(event) {
 }
 
 .dropzone-icon {
-  font-size: 1.5rem;
   color: var(--color-primary);
-  margin-bottom: var(--space-2);
+  margin: 0 auto var(--space-3);
+  justify-content: center;
+}
+
+.dropzone-icon svg {
+  width: 28px;
+  height: 28px;
 }
 
 .dropzone-title {

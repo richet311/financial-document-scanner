@@ -1,5 +1,12 @@
 <script setup>
 import ApiStatus from './ApiStatus.vue'
+
+const ICONS = {
+  scan:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="4" y1="12" x2="20" y2="12" stroke-width="2" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>',
+  dashboard:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.2" /><rect x="13" y="4" width="7" height="4" rx="1.2" /><rect x="13" y="10" width="7" height="10" rx="1.2" /><rect x="4" y="13" width="7" height="7" rx="1.2" /></svg>',
+}
 </script>
 
 <template>
@@ -14,11 +21,11 @@ import ApiStatus from './ApiStatus.vue'
 
     <nav class="nav">
       <RouterLink to="/" class="nav-link" exact-active-class="nav-link-active">
-        <span class="nav-icon">⤴</span>
+        <span class="nav-icon icon" v-html="ICONS.scan"></span>
         Scan Document
       </RouterLink>
       <RouterLink to="/dashboard" class="nav-link" exact-active-class="nav-link-active">
-        <span class="nav-icon">▤</span>
+        <span class="nav-icon icon" v-html="ICONS.dashboard"></span>
         Dashboard
       </RouterLink>
     </nav>
@@ -101,9 +108,9 @@ import ApiStatus from './ApiStatus.vue'
   color: var(--color-primary);
 }
 
-.nav-icon {
-  width: 1.1rem;
-  text-align: center;
+.nav-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .sidebar-footer {
