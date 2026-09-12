@@ -154,9 +154,9 @@ financial-document-scanner/
 ├── frontend/
 │   ├── src/
 │   │   ├── App.vue            sidebar shell + router outlet
-│   │   ├── router.js          vue-router routes (Scan, Dashboard)
+│   │   ├── router.js          vue-router routes (Home, Scan, Dashboard)
 │   │   ├── store/auth.js      shared login-token state
-│   │   ├── pages/              ScanPage, DashboardPage
+│   │   ├── pages/              LandingPage, ScanPage, DashboardPage
 │   │   └── components/        NavSidebar, UploadDropzone, ResultsPanel, ApiStatus
 │   └── package.json
 ├── render.yaml                deployment blueprint
