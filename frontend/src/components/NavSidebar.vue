@@ -2,6 +2,8 @@
 import ApiStatus from './ApiStatus.vue'
 
 const ICONS = {
+  home:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 L12 4 L20 11" /><path d="M6 9.5 V20 H18 V9.5" /></svg>',
   scan:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="4" y1="12" x2="20" y2="12" stroke-width="2" /><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" /></svg>',
   dashboard:
@@ -11,13 +13,17 @@ const ICONS = {
 
 <template>
   <aside class="sidebar">
-    <div class="brand">
+    <RouterLink to="/" class="brand">
       <div class="brand-name">Financial<br />Document Scanner</div>
       <div class="brand-tag">Document intelligence demo</div>
-    </div>
+    </RouterLink>
 
     <nav class="nav">
       <RouterLink to="/" class="nav-link" exact-active-class="nav-link-active">
+        <span class="nav-icon icon" v-html="ICONS.home"></span>
+        Home
+      </RouterLink>
+      <RouterLink to="/scan" class="nav-link" exact-active-class="nav-link-active">
         <span class="nav-icon icon" v-html="ICONS.scan"></span>
         Scan Document
       </RouterLink>
@@ -46,8 +52,10 @@ const ICONS = {
 }
 
 .brand {
+  display: block;
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
 }
 
 .brand-name {
