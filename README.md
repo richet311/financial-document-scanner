@@ -27,10 +27,11 @@ actually useful to nonprofits and individuals working on financial literacy.
    engine pulls out key fields (income, expenses) and turns them into
    plain-language insights: withholding rate, savings rate, overspending
    warnings.
-4. The frontend shows the extracted data and insights. The original file is
-   never stored; a JWT-protected endpoint exposes an in-memory history of
-   past analyses (filename, classification, insights) for the current
-   server session only, cleared on restart.
+4. The frontend (a Scan page and a Dashboard, behind a sidebar nav) shows
+   the extracted data and insights. The original file is never stored; a
+   JWT-protected endpoint feeds the Dashboard an in-memory history of past
+   analyses (filename, classification, insights) for the current server
+   session only, cleared on restart.
 
 ## Architecture
 
@@ -152,8 +153,11 @@ financial-document-scanner/
 │   └── requirements-dev.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── App.vue
-│   │   └── components/        ApiStatus, UploadForm, AccountPanel
+│   │   ├── App.vue            sidebar shell + router outlet
+│   │   ├── router.js          vue-router routes (Scan, Dashboard)
+│   │   ├── store/auth.js      shared login-token state
+│   │   ├── pages/              ScanPage, DashboardPage
+│   │   └── components/        NavSidebar, UploadDropzone, ResultsPanel, ApiStatus
 │   └── package.json
 ├── render.yaml                deployment blueprint
 └── README.md
