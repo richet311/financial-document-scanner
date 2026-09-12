@@ -24,34 +24,40 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="api-status" :class="status">
+  <div class="api-status" :class="status" :title="detail">
     <span class="dot"></span>
-    <span v-if="status === 'checking'">Checking API connection...</span>
-    <span v-else-if="status === 'connected'">API connected ({{ detail }})</span>
-    <span v-else>API unreachable — is the backend running? ({{ detail }})</span>
+    <span v-if="status === 'checking'">Checking API...</span>
+    <span v-else-if="status === 'connected'">API connected</span>
+    <span v-else>API unreachable</span>
   </div>
 </template>
 
 <style scoped>
 .api-status {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  background: #f1f1f1;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
 }
+
 .dot {
-  width: 0.6rem;
-  height: 0.6rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
-  background: #999;
+  background: var(--color-text-faint);
+  flex-shrink: 0;
 }
+
 .connected .dot {
-  background: #2ea043;
+  background: var(--color-success);
 }
+
 .unreachable .dot {
-  background: #d1242f;
+  background: var(--color-danger);
 }
 </style>
