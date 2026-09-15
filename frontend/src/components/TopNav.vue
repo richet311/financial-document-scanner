@@ -20,11 +20,9 @@ async function onSignOut() {
 
       <nav class="nav">
         <RouterLink to="/" class="nav-link" exact-active-class="nav-link-active">Home</RouterLink>
-        <RouterLink to="/scan" class="nav-link" exact-active-class="nav-link-active">Scan Document</RouterLink>
+        <RouterLink to="/scan" class="nav-link" exact-active-class="nav-link-active">Scan</RouterLink>
         <RouterLink to="/dashboard" class="nav-link" exact-active-class="nav-link-active">Dashboard</RouterLink>
-        <RouterLink to="/samples" class="nav-link" exact-active-class="nav-link-active">Sample Documents</RouterLink>
-        <RouterLink to="/privacy" class="nav-link" exact-active-class="nav-link-active">Privacy</RouterLink>
-        <RouterLink to="/terms" class="nav-link" exact-active-class="nav-link-active">Terms</RouterLink>
+        <RouterLink to="/samples" class="nav-link" exact-active-class="nav-link-active">Samples</RouterLink>
       </nav>
 
       <ApiStatus class="topbar-status" />
@@ -50,17 +48,18 @@ async function onSignOut() {
 }
 
 .topbar-inner {
-  max-width: 1180px;
+  max-width: var(--container-max);
   margin: 0 auto;
   padding: var(--space-3) var(--space-6);
   display: flex;
   align-items: center;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
   color: var(--color-text);
   text-decoration: none;
   white-space: nowrap;
@@ -79,7 +78,7 @@ async function onSignOut() {
 }
 
 .nav-link {
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   font-weight: 500;
   color: var(--color-text-muted);
   text-decoration: none;

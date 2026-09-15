@@ -6,6 +6,12 @@ const detail = ref('')
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
+const LABELS = {
+  checking: 'Checking API...',
+  connected: 'API connected',
+  unreachable: 'API unreachable',
+}
+
 onMounted(async () => {
   try {
     const response = await fetch(`${apiBaseUrl}/api/health`)
@@ -24,33 +30,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="api-status" :class="status" :title="detail">
+  <span class="api-status" :class="status" :title="detail || LABELS[status]">
     <span class="dot"></span>
-    <span v-if="status === 'checking'">Checking API...</span>
-    <span v-else-if="status === 'connected'">API connected</span>
-    <span v-else>API unreachable</span>
-  </div>
+  </span>
 </template>
 
 <style scoped>
 .api-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  background: var(--color-surface-muted);
-  border: 1px solid var(--color-border);
 }
 
 .dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--color-text-faint);
-  flex-shrink: 0;
 }
 
 .connected .dot {
