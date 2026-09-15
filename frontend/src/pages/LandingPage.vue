@@ -207,8 +207,11 @@ function goToScan() {
 }
 
 .hero h1 {
-  font-size: 2.3rem;
-  max-width: 18ch;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.05;
+  text-transform: uppercase;
+  max-width: 16ch;
   margin-bottom: var(--space-4);
   color: var(--color-text);
 }
@@ -319,7 +322,7 @@ function goToScan() {
 
 .capability-card h3 {
   font-size: 1.02rem;
-  color: var(--color-accent);
+  color: var(--color-primary);
   margin-bottom: var(--space-2);
 }
 
@@ -411,7 +414,7 @@ function goToScan() {
 
 .step h3 {
   font-size: 0.98rem;
-  color: var(--color-accent);
+  color: var(--color-primary);
   margin-bottom: var(--space-2);
 }
 

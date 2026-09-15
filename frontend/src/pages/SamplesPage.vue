@@ -72,7 +72,7 @@ function goToScan() {
 
 .sample-card h2 {
   font-size: 1.02rem;
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .sample-card p {
