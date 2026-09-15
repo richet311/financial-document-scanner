@@ -1,9 +1,13 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { authStore, signOut } from '../store/auth'
 import { isSupabaseConfigured } from '../lib/supabaseClient'
 
 const router = useRouter()
+const route = useRoute()
+
+const isDashboardActive = computed(() => route.path.startsWith('/dashboard'))
 
 async function onSignOut() {
   await signOut()
@@ -25,7 +29,7 @@ async function onSignOut() {
           v-if="isSupabaseConfigured"
           to="/dashboard"
           class="nav-link"
-          exact-active-class="nav-link-active"
+          :class="{ 'nav-link-active': isDashboardActive }"
         >
           Dashboard
         </RouterLink>

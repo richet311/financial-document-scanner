@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from './pages/LandingPage.vue'
 import ScanPage from './pages/ScanPage.vue'
 import DashboardPage from './pages/DashboardPage.vue'
+import ScanDetailPage from './pages/ScanDetailPage.vue'
 import SamplesPage from './pages/SamplesPage.vue'
 import PrivacyPage from './pages/PrivacyPage.vue'
 import TermsPage from './pages/TermsPage.vue'
@@ -12,6 +13,12 @@ const routes = [
   { path: '/', name: 'home', component: LandingPage },
   { path: '/scan', name: 'scan', component: ScanPage },
   { path: '/dashboard', name: 'dashboard', component: DashboardPage, meta: { requiresAuth: true } },
+  {
+    path: '/dashboard/scans/:id',
+    name: 'scan-detail',
+    component: ScanDetailPage,
+    meta: { requiresAuth: true },
+  },
   { path: '/samples', name: 'samples', component: SamplesPage },
   { path: '/privacy', name: 'privacy', component: PrivacyPage },
   { path: '/terms', name: 'terms', component: TermsPage },
