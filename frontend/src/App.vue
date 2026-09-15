@@ -1,15 +1,20 @@
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import TopNav from './components/TopNav.vue'
 import SiteFooter from './components/SiteFooter.vue'
+
+const route = useRoute()
+const isAuthPage = computed(() => route.name === 'login')
 </script>
 
 <template>
   <div class="shell">
-    <TopNav />
-    <div class="shell-main">
+    <TopNav v-if="!isAuthPage" />
+    <div class="shell-main" :class="{ 'shell-main-flush': isAuthPage }">
       <RouterView />
     </div>
-    <SiteFooter />
+    <SiteFooter v-if="!isAuthPage" />
   </div>
 </template>
 
@@ -26,6 +31,11 @@ import SiteFooter from './components/SiteFooter.vue'
   max-width: var(--container-max);
   margin: 0 auto;
   padding: var(--space-6);
+}
+
+.shell-main-flush {
+  max-width: none;
+  padding: 0;
 }
 
 @media (max-width: 640px) {

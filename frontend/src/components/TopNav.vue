@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import ApiStatus from './ApiStatus.vue'
 import { authStore, signOut } from '../store/auth'
+import { isSupabaseConfigured } from '../lib/supabaseClient'
 
 const router = useRouter()
 
@@ -21,11 +21,16 @@ async function onSignOut() {
       <nav class="nav">
         <RouterLink to="/" class="nav-link" exact-active-class="nav-link-active">Home</RouterLink>
         <RouterLink to="/scan" class="nav-link" exact-active-class="nav-link-active">Scan</RouterLink>
-        <RouterLink to="/dashboard" class="nav-link" exact-active-class="nav-link-active">Dashboard</RouterLink>
+        <RouterLink
+          v-if="isSupabaseConfigured"
+          to="/dashboard"
+          class="nav-link"
+          exact-active-class="nav-link-active"
+        >
+          Dashboard
+        </RouterLink>
         <RouterLink to="/samples" class="nav-link" exact-active-class="nav-link-active">Samples</RouterLink>
       </nav>
-
-      <ApiStatus class="topbar-status" />
 
       <div class="auth-area">
         <template v-if="authStore.user">
@@ -96,10 +101,6 @@ async function onSignOut() {
   border-bottom-color: var(--color-primary);
 }
 
-.topbar-status {
-  white-space: nowrap;
-}
-
 .auth-area {
   display: flex;
   align-items: center;
@@ -124,10 +125,6 @@ async function onSignOut() {
   .topbar-inner {
     flex-wrap: wrap;
     row-gap: var(--space-3);
-  }
-
-  .topbar-status {
-    display: none;
   }
 }
 
