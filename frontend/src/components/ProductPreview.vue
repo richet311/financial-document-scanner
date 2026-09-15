@@ -1,8 +1,8 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-// 0 = extracting, 1 = classified, 2 = insights shown. Advances once and
-// settles on the final state, rather than looping indefinitely.
+// 0 = extracting, 1 = classified, 2 = fields + insight shown. Advances once
+// and settles on the final state, rather than looping indefinitely.
 const step = ref(0)
 let timer = null
 
@@ -23,67 +23,66 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="preview-window">
-    <div class="preview-body">
-      <div class="file-row">
-        <span class="file-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-            <rect x="5" y="3" width="14" height="18" rx="2" />
-            <line x1="8" y1="8" x2="16" y2="8" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-            <line x1="8" y1="16" x2="13" y2="16" />
-          </svg>
-        </span>
-        <div class="file-meta">
-          <div class="file-name">statement.pdf</div>
-          <div class="file-size">214 KB</div>
-        </div>
-        <span class="file-check" :class="{ 'file-check-done': step >= 1 }">
-          <svg v-if="step >= 1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
+    <div class="file-row">
+      <span class="file-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <line x1="8" y1="8" x2="16" y2="8" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+          <line x1="8" y1="16" x2="13" y2="16" />
+        </svg>
+      </span>
+      <div class="file-meta">
+        <div class="file-name">statement.pdf</div>
+        <div class="file-size">214 KB</div>
       </div>
-
-      <div class="preview-row" :class="{ 'preview-row-active': step === 0 }">
-        <span class="spinner" v-if="step === 0"></span>
-        <span class="row-icon" v-else>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
-        <span>Extracting document data</span>
-      </div>
-
-      <div class="preview-row" :class="{ 'preview-row-active': step === 1 }">
-        <span class="row-icon" :class="{ 'row-icon-muted': step < 1 }">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
-            <path d="M12 3 L21 8 L12 13 L3 8 Z" />
-          </svg>
-        </span>
-        <span v-if="step < 1" class="row-muted">Classifying document type</span>
-        <span v-else>
-          Classified as
-          <strong class="classification-badge">Bank statement</strong>
-        </span>
-      </div>
-
-      <transition name="fade">
-        <div class="insight-grid" v-if="step >= 2">
-          <div class="insight-tile">
-            <span class="insight-label">Income</span>
-            <span class="insight-value">$5,200</span>
-          </div>
-          <div class="insight-tile">
-            <span class="insight-label">Expenses</span>
-            <span class="insight-value">$3,180</span>
-          </div>
-          <div class="insight-tile">
-            <span class="insight-label">Savings rate</span>
-            <span class="insight-value insight-value-accent">39%</span>
-          </div>
-        </div>
-      </transition>
+      <span class="file-check" v-if="step >= 1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+      </span>
     </div>
+
+    <div class="preview-row" v-if="step === 0">
+      <span class="spinner"></span>
+      <span>Extracting document data</span>
+    </div>
+
+    <div class="classification-block" v-else>
+      <div class="classification-row">
+        <span class="doc-type-badge">Bank statement</span>
+        <span class="confidence-text">94% confidence</span>
+      </div>
+      <div class="confidence-track">
+        <div class="confidence-fill"></div>
+      </div>
+    </div>
+
+    <transition name="fade">
+      <div class="fields-block" v-if="step >= 2">
+        <div class="field-row">
+          <span class="field-label">Ending balance</span>
+          <span class="field-value">$4,570.00</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-tile">
+            <span class="metric-label">Income</span>
+            <span class="metric-value">$5,200</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">Expenses</span>
+            <span class="metric-value">$3,180</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">Savings rate</span>
+            <span class="metric-value">39%</span>
+          </div>
+        </div>
+
+        <p class="insight-text">Savings rate is 39% after expenses this period.</p>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -94,8 +93,11 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   width: 100%;
-  max-width: 380px;
-  overflow: hidden;
+  max-width: 400px;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   animation: preview-enter 0.6s ease both;
 }
 
@@ -108,13 +110,6 @@ onBeforeUnmount(() => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.preview-body {
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 
 .file-row {
@@ -151,24 +146,10 @@ onBeforeUnmount(() => {
 }
 
 .file-check {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: var(--color-success);
-  transition: transform 0.2s ease;
-}
-
-.file-check-done {
-  transform: scale(1);
-}
-
-.file-check svg {
-  width: 14px;
-  height: 14px;
 }
 
 .preview-row {
@@ -177,29 +158,6 @@ onBeforeUnmount(() => {
   gap: var(--space-3);
   font-size: 0.85rem;
   color: var(--color-text-muted);
-}
-
-.preview-row-active {
-  color: var(--color-text);
-}
-
-.row-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  color: var(--color-primary);
-}
-
-.row-icon-muted {
-  color: var(--color-text-faint);
-}
-
-.row-muted {
-  color: var(--color-text-faint);
-}
-
-.classification-badge {
-  color: var(--color-primary);
 }
 
 .spinner {
@@ -218,13 +176,73 @@ onBeforeUnmount(() => {
   }
 }
 
-.insight-grid {
+.classification-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.classification-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.doc-type-badge {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.confidence-text {
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+}
+
+.confidence-track {
+  height: 4px;
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  width: 94%;
+  background: var(--color-accent);
+  border-radius: 999px;
+}
+
+.fields-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.field-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.field-label {
+  color: var(--color-text-muted);
+}
+
+.field-value {
+  font-weight: 600;
+}
+
+.metric-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
 }
 
-.insight-tile {
+.metric-tile {
   background: var(--color-surface-muted);
   border-radius: var(--radius-sm);
   padding: var(--space-3) var(--space-2);
@@ -233,18 +251,20 @@ onBeforeUnmount(() => {
   gap: 2px;
 }
 
-.insight-label {
+.metric-label {
   font-size: 0.68rem;
   color: var(--color-text-faint);
 }
 
-.insight-value {
+.metric-value {
   font-size: 0.95rem;
   font-weight: 700;
 }
 
-.insight-value-accent {
-  color: var(--color-accent);
+.insight-text {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
 }
 
 .fade-enter-active {
