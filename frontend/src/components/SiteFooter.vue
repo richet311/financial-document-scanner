@@ -76,4 +76,14 @@ const year = new Date().getFullYear()
   font-size: 0.76rem;
   color: var(--color-text-faint);
 }
+
+@media (max-width: 640px) {
+  .footer-inner {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .footer-bottom {
+    padding: 0 var(--space-4) var(--space-5);
+  }
+}
 </style>

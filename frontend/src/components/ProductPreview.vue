@@ -1,15 +1,19 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-// 0 = extracting, 1 = classified, 2 = insights shown. Cycles on a timer to
-// give the preview a sense of life without being a distracting animation.
+// 0 = extracting, 1 = classified, 2 = insights shown. Advances once and
+// settles on the final state, rather than looping indefinitely.
 const step = ref(0)
 let timer = null
 
 onMounted(() => {
   timer = setInterval(() => {
-    step.value = (step.value + 1) % 3
-  }, 2200)
+    if (step.value >= 2) {
+      clearInterval(timer)
+      return
+    }
+    step.value += 1
+  }, 900)
 })
 
 onBeforeUnmount(() => {
@@ -19,13 +23,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="preview-window">
-    <div class="preview-titlebar">
-      <span class="preview-dot"></span>
-      <span class="preview-dot"></span>
-      <span class="preview-dot"></span>
-      <span class="preview-title">Scan a document</span>
-    </div>
-
     <div class="preview-body">
       <div class="file-row">
         <span class="file-icon">
@@ -111,28 +108,6 @@ onBeforeUnmount(() => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.preview-titlebar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-muted);
-}
-
-.preview-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-border);
-}
-
-.preview-title {
-  margin-left: var(--space-2);
-  font-size: 0.78rem;
-  color: var(--color-text-faint);
 }
 
 .preview-body {

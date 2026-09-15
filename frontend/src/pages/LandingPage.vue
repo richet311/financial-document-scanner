@@ -84,10 +84,9 @@ function goToPrivacy() {
   <div class="landing">
     <section class="hero">
       <div class="hero-content">
-        <span class="eyebrow">Financial Document Scanner</span>
         <h1>Understand your financial documents instantly.</h1>
         <p class="hero-subtitle">
-          Upload a bank statement, pay stub, or budget sheet and get extracted
+          Upload a bank statement, pay stub, or budget sheet. Get extracted
           data and financial insights back in seconds.
         </p>
 
@@ -133,7 +132,7 @@ function goToPrivacy() {
     <section class="privacy-band">
       <span class="privacy-icon icon" v-html="ICONS.shield"></span>
       <div class="privacy-copy">
-        <h2>Your documents stay private.</h2>
+        <h2 class="section-heading">Your documents stay private.</h2>
         <ul class="privacy-list">
           <li v-for="point in privacyPoints" :key="point">{{ point }}</li>
         </ul>
@@ -142,7 +141,7 @@ function goToPrivacy() {
     </section>
 
     <section class="cta-banner">
-      <h2>See what your documents can tell you.</h2>
+      <h2 class="section-heading">See what your documents can tell you.</h2>
       <p>Scan a document and receive structured financial insights in seconds.</p>
       <button class="btn btn-primary" @click="goToScan">Scan a document</button>
     </section>
@@ -153,26 +152,17 @@ function goToPrivacy() {
 .landing {
   display: flex;
   flex-direction: column;
-  gap: var(--space-7);
+  gap: var(--space-6);
 }
 
 .hero {
   display: flex;
   align-items: center;
   gap: var(--space-7);
-  padding-top: var(--space-4);
 }
 
 .hero-content {
   flex: 1 1 52%;
-}
-
-.eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin-bottom: var(--space-3);
 }
 
 .hero h1 {
@@ -237,19 +227,13 @@ function goToPrivacy() {
 }
 
 .capability-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--color-accent-soft);
   color: var(--color-accent);
-  align-items: center;
-  justify-content: center;
   margin-bottom: var(--space-3);
 }
 
 .capability-icon :deep(svg) {
-  width: 17px;
-  height: 17px;
+  width: 22px;
+  height: 22px;
 }
 
 .capability h3 {
@@ -315,29 +299,23 @@ function goToPrivacy() {
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-  background: var(--color-surface-muted);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-6) 0;
+  border-top: 1px solid var(--color-border);
 }
 
 .privacy-icon {
-  width: 34px;
-  height: 34px;
   flex-shrink: 0;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary-soft);
   color: var(--color-primary);
-  align-items: center;
-  justify-content: center;
+  margin-top: 2px;
 }
 
 .privacy-icon :deep(svg) {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
-.privacy-copy h2 {
-  font-size: 1.1rem;
+.privacy-copy .section-heading,
+.cta-banner .section-heading {
   margin-bottom: var(--space-3);
 }
 
@@ -387,11 +365,6 @@ function goToPrivacy() {
   border-top: 1px solid var(--color-border);
 }
 
-.cta-banner h2 {
-  font-size: 1.6rem;
-  margin-bottom: var(--space-2);
-}
-
 .cta-banner p {
   color: var(--color-text-muted);
   margin-bottom: var(--space-5);
@@ -406,10 +379,6 @@ function goToPrivacy() {
   .hero h1 {
     max-width: none;
     font-size: 2.1rem;
-  }
-
-  .hero-visual {
-    order: -1;
   }
 
   .capabilities {

@@ -27,4 +27,10 @@ import SiteFooter from './components/SiteFooter.vue'
   margin: 0 auto;
   padding: var(--space-6);
 }
+
+@media (max-width: 640px) {
+  .shell-main {
+    padding: var(--space-5) var(--space-4);
+  }
+}
 </style>

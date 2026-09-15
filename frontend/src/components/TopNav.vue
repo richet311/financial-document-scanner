@@ -130,4 +130,10 @@ async function onSignOut() {
     display: none;
   }
 }
+
+@media (max-width: 640px) {
+  .topbar-inner {
+    padding: var(--space-3) var(--space-4);
+  }
+}
 </style>
