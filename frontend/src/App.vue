@@ -1,13 +1,13 @@
 <script setup>
-import NavSidebar from './components/NavSidebar.vue'
+import TopNav from './components/TopNav.vue'
 </script>
 
 <template>
   <div class="shell">
-    <NavSidebar />
+    <TopNav />
     <div class="shell-main">
       <div class="disclaimer">
-        Independent demo project — not affiliated with any bank or financial
+        Independent demo project, not affiliated with any bank or financial
         institution. All sample documents are synthetic.
       </div>
       <RouterView />
@@ -17,14 +17,17 @@ import NavSidebar from './components/NavSidebar.vue'
 
 <style scoped>
 .shell {
-  display: flex;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .shell-main {
   flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
   padding: var(--space-6);
-  max-width: 1080px;
 }
 
 .disclaimer {
