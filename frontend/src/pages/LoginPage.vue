@@ -40,8 +40,10 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="login-page">
-    <div class="login-box">
+  <div class="auth-page">
+    <div class="auth-card">
+      <RouterLink to="/" class="auth-brand">Financial Document Scanner</RouterLink>
+
       <h1>{{ mode === 'sign-in' ? 'Sign in' : 'Create an account' }}</h1>
       <p class="subtitle">
         {{
@@ -51,7 +53,7 @@ async function onSubmit() {
         }}
       </p>
 
-      <form class="login-form" @submit.prevent="onSubmit">
+      <form class="auth-form" @submit.prevent="onSubmit">
         <label>
           Email
           <input v-model="email" type="email" required autocomplete="email" />
@@ -76,35 +78,49 @@ async function onSubmit() {
 </template>
 
 <style scoped>
-.login-page {
+.auth-page {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding-top: var(--space-7);
+  min-height: 100vh;
+  padding: var(--space-5);
 }
 
-.login-box {
+.auth-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
 }
 
-.login-box h1 {
-  font-size: 1.6rem;
+.auth-brand {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-bottom: var(--space-5);
+}
+
+.auth-card h1 {
+  font-size: 1.4rem;
   margin-bottom: var(--space-2);
 }
 
 .subtitle {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   margin-bottom: var(--space-5);
 }
 
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
-.login-form label {
+.auth-form label {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -112,13 +128,17 @@ async function onSubmit() {
   color: var(--color-text-muted);
 }
 
-.login-form input {
+.auth-form input {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 0.95rem;
+}
+
+.auth-form .btn {
+  margin-top: var(--space-1);
 }
 
 .error {
@@ -134,6 +154,7 @@ async function onSubmit() {
 }
 
 .toggle-link {
+  display: block;
   background: none;
   border: none;
   color: var(--color-primary);
