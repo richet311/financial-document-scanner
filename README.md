@@ -27,11 +27,12 @@ actually useful to nonprofits and individuals working on financial literacy.
    engine pulls out key fields (income, expenses) and turns them into
    plain-language insights: withholding rate, savings rate, overspending
    warnings.
-4. The frontend (a Scan page and a Dashboard, behind a sidebar nav) shows
-   the extracted data and insights. The original file is never stored; a
-   JWT-protected endpoint feeds the Dashboard an in-memory history of past
-   analyses (filename, classification, insights) for the current server
-   session only, cleared on restart.
+4. The frontend (Scan and Dashboard pages, behind top navigation, alongside
+   Sample Documents, Security, and About pages) shows the extracted data and
+   insights. The original file is never stored; a JWT-protected endpoint
+   feeds the Dashboard an in-memory history of past analyses (filename,
+   classification, insights) for the current server session only, cleared
+   on restart.
 
 ## Architecture
 
@@ -90,8 +91,9 @@ python -m venv .venv
 # source .venv/bin/activate   # macOS/Linux
 pip install -r requirements.txt
 cp .env.example .env
-python -m app.ml.generate_dataset   # one-time: builds a synthetic training set
-python -m app.ml.train_classifier   # one-time: trains and saves the classifier
+python -m app.ml.generate_dataset      # one-time: builds a synthetic training set
+python -m app.ml.train_classifier      # one-time: trains and saves the classifier
+python -m app.ml.generate_sample_pdfs  # one-time: writes sample PDFs for the frontend's Sample Documents page
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -103,7 +105,7 @@ still runs; document classification is just skipped (uploads still get text
 extraction and field-based insights).
 
 The demo login (`POST /api/auth/login`) uses the `DEMO_USERNAME` /
-`DEMO_PASSWORD` values from your `.env` — it's a single hardcoded credential
+`DEMO_PASSWORD` values from your `.env`. It's a single hardcoded credential
 pair to demonstrate JWT-protected routes, not a real user system.
 
 ### Frontend
@@ -147,17 +149,18 @@ financial-document-scanner/
 │   │   ├── core/              config, logging, security, auth, deps
 │   │   ├── api/routes/        route handlers (health, documents, auth)
 │   │   ├── services/          OCR, classifier, insight engine, history
-│   │   └── ml/                dataset generation + classifier training
+│   │   └── ml/                dataset generation, classifier training, sample PDFs
 │   ├── tests/                 pytest suite
 │   ├── requirements.txt
 │   └── requirements-dev.txt
 ├── frontend/
+│   ├── public/samples/         generated sample PDFs (see backend/app/ml/generate_sample_pdfs.py)
 │   ├── src/
-│   │   ├── App.vue            sidebar shell + router outlet
-│   │   ├── router.js          vue-router routes (Home, Scan, Dashboard)
+│   │   ├── App.vue            top nav shell + router outlet
+│   │   ├── router.js          vue-router routes
 │   │   ├── store/auth.js      shared login-token state
-│   │   ├── pages/              LandingPage, ScanPage, DashboardPage
-│   │   └── components/        NavSidebar, UploadDropzone, ResultsPanel, ApiStatus
+│   │   ├── pages/              Landing, Scan, Dashboard, Samples, Security, About
+│   │   └── components/        TopNav, UploadDropzone, ResultsPanel, ApiStatus
 │   └── package.json
 ├── render.yaml                deployment blueprint
 └── README.md
@@ -190,7 +193,7 @@ financial-document-scanner/
       protected analysis-history endpoint, frontend upload results view and
       login/history panel.
 - [x] **Phase 5:** pytest suite, GitHub Actions CI, and a Render deployment
-      blueprint. Actually deploying still requires a Render account — see
+      blueprint. Actually deploying still requires a Render account, see
       [Deployment](#deployment).
 
 ## Deployment
@@ -203,7 +206,7 @@ backend and the static Vue frontend) on the free plan.
 3. Deploy. `JWT_SECRET_KEY` and `DEMO_PASSWORD` are auto-generated.
 4. Once both services have their `onrender.com` URLs, set `ALLOWED_ORIGINS`
    on the backend to the frontend's URL, and `VITE_API_BASE_URL` on the
-   frontend to the backend's URL, then redeploy both — neither is known
+   frontend to the backend's URL, then redeploy both. Neither is known
    before the first deploy.
 
 This hasn't been run against a live Render account, so treat it as a
