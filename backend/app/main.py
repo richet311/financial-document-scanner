@@ -7,28 +7,25 @@ from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.api.routes import auth, documents, health
+from app.api.routes import documents, health
 from app.core.config import settings
 from app.core.logging import logger
 from app.core.security import limiter
 from app.services.classifier import ClassifierNotTrainedError, get_model
 from app.services.ocr import OcrExtractionError, get_reader
 
-INSECURE_DEFAULTS = {"jwt_secret_key": "change-me-in-.env", "demo_password": "change-me-in-.env"}
-
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     logger.info("%s starting up in '%s' mode", settings.app_name, settings.environment)
 
-    if settings.environment == "production":
-        for field, default_value in INSECURE_DEFAULTS.items():
-            if getattr(settings, field) == default_value:
-                logger.error(
-                    "%s is left at its insecure default in production. "
-                    "Set it via the environment before real traffic hits this service.",
-                    field,
-                )
+    if settings.environment == "production" and not (
+        settings.supabase_url and settings.supabase_anon_key
+    ):
+        logger.error(
+            "SUPABASE_URL / SUPABASE_ANON_KEY are not set in production. "
+            "Sign-in and scan history will not work until they are."
+        )
 
     try:
         get_reader()
@@ -90,4 +87,3 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 app.include_router(health.router, prefix="/api")
 app.include_router(documents.router, prefix="/api")
-app.include_router(auth.router, prefix="/api")

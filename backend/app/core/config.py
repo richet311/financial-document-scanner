@@ -15,15 +15,11 @@ class Settings(BaseSettings):
     # Rate limiting (per client IP)
     rate_limit_default: str = "60/minute"
 
-    # Auth
-    jwt_secret_key: str = "change-me-in-.env"
-    jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 30
-
-    # Demo-only credentials for the /api/auth/login example. Not a real user
-    # system; illustrates JWT-protected routes.
-    demo_username: str = "demo"
-    demo_password: str = "change-me-in-.env"
+    # Supabase project used for auth and persisting scan history. Signed-in
+    # users get their uploads saved; anonymous uploads still work but are
+    # not persisted anywhere.
+    supabase_url: str = ""
+    supabase_anon_key: str = ""
 
     # Upload constraints
     max_upload_size_bytes: int = 10 * 1024 * 1024  # 10 MB

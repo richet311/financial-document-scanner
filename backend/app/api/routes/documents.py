@@ -1,20 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, status
 
-from app.core.deps import get_current_user
+from app.core.deps import CurrentUser, get_optional_user
 from app.core.file_validation import FileValidationError, validate_upload
 from app.core.logging import logger
 from app.core.security import limiter
 from app.services.classifier import ClassifierNotTrainedError, classify_document
-from app.services.history import get_history, record_analysis
 from app.services.insights import extract_fields, generate_insights
 from app.services.ocr import OcrExtractionError, extract_text
+from app.services.scans import ScanPersistenceError, save_scan
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
 
 @router.post("/upload")
 @limiter.limit("10/minute")
-async def upload_document(request: Request, file: UploadFile):
+async def upload_document(
+    request: Request,
+    file: UploadFile,
+    user: CurrentUser | None = Depends(get_optional_user),
+):
     try:
         contents, content_type = await validate_upload(file)
     except FileValidationError as exc:
@@ -46,12 +50,21 @@ async def upload_document(request: Request, file: UploadFile):
     fields = extract_fields(extracted_text)
     insights = generate_insights(fields)
 
-    record_analysis(
-        filename=file.filename,
-        document_type=document_type,
-        confidence=confidence,
-        insights=insights,
-    )
+    saved = False
+    if user is not None:
+        try:
+            save_scan(
+                access_token=user.access_token,
+                user_id=user.id,
+                filename=file.filename,
+                document_type=document_type,
+                confidence=confidence,
+                fields=fields,
+                insights=insights,
+            )
+            saved = True
+        except ScanPersistenceError as exc:
+            logger.error("Scan not saved for user %s: %s", user.id, exc)
 
     return {
         "filename": file.filename,
@@ -63,10 +76,5 @@ async def upload_document(request: Request, file: UploadFile):
         "confidence": confidence,
         "fields": fields,
         "insights": insights,
+        "saved": saved,
     }
-
-
-@router.get("/history")
-@limiter.limit("30/minute")
-async def document_history(request: Request, user: str = Depends(get_current_user)):
-    return {"history": get_history()}
