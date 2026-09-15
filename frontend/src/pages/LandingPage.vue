@@ -9,25 +9,6 @@ const ICONS = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 L19 6 V11 C19 16 16 19.5 12 21 C8 19.5 5 16 5 11 V6 Z" /><path d="M9 12 L11 14 L15 9.5" /></svg>',
 }
 
-const pipeline = [
-  {
-    label: 'Extract',
-    text: 'Reads embedded PDF text directly, or falls back to OCR for scanned documents and images.',
-  },
-  {
-    label: 'Classify',
-    text: 'Identifies whether the document is a pay stub, bank statement, or budget sheet.',
-  },
-  {
-    label: 'Analyze',
-    text: 'Pulls out the relevant financial fields and calculates income, expenses, and savings rate.',
-  },
-  {
-    label: 'Understand',
-    text: 'Presents the results as a plain-language financial insight.',
-  },
-]
-
 const privacyPoints = [
   'Files are validated before processing.',
   'Uploads are processed in memory.',
@@ -74,12 +55,64 @@ function goToPrivacy() {
       </div>
     </section>
 
-    <section class="pipeline-section">
+    <section class="workflow-section">
       <h2 class="section-heading">How it works</h2>
-      <div class="pipeline-list">
-        <div v-for="item in pipeline" :key="item.label" class="pipeline-row">
-          <span class="pipeline-label">{{ item.label }}</span>
-          <span class="pipeline-text">{{ item.text }}</span>
+
+      <div class="workflow-panel">
+        <div class="workflow-track">
+          <div class="workflow-stage">
+            <div class="stage-visual extract-visual">
+              <span class="extract-line" style="width: 68%"></span>
+              <span class="extract-highlight">
+                <span class="extract-highlight-label">Ending balance</span>
+                <span class="extract-highlight-value">$4,570.00</span>
+              </span>
+              <span class="extract-line" style="width: 46%"></span>
+            </div>
+            <span class="stage-caption">Extract text</span>
+          </div>
+
+          <span class="workflow-connector" aria-hidden="true">&rarr;</span>
+
+          <div class="workflow-stage">
+            <div class="stage-visual classify-visual">
+              <span class="doc-type-chip">Bank statement</span>
+              <div class="mini-confidence-track">
+                <div class="mini-confidence-fill"></div>
+              </div>
+              <span class="mini-confidence-label">96% confidence</span>
+            </div>
+            <span class="stage-caption">Classify document</span>
+          </div>
+
+          <span class="workflow-connector" aria-hidden="true">&rarr;</span>
+
+          <div class="workflow-stage">
+            <div class="stage-visual analyze-visual">
+              <div class="mini-metric-row">
+                <span>Income</span>
+                <span class="mini-metric-value">$5,200</span>
+              </div>
+              <div class="mini-metric-row">
+                <span>Expenses</span>
+                <span class="mini-metric-value">$3,180</span>
+              </div>
+              <div class="mini-metric-row">
+                <span>Savings rate</span>
+                <span class="mini-metric-value">39%</span>
+              </div>
+            </div>
+            <span class="stage-caption">Calculate financials</span>
+          </div>
+
+          <span class="workflow-connector" aria-hidden="true">&rarr;</span>
+
+          <div class="workflow-stage">
+            <div class="stage-visual insight-visual">
+              Spending increased 8% this month.
+            </div>
+            <span class="stage-caption">Generate insight</span>
+          </div>
         </div>
       </div>
     </section>
@@ -174,35 +207,133 @@ function goToPrivacy() {
   margin-bottom: var(--space-5);
 }
 
-.pipeline-list {
+.workflow-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-5);
+}
+
+.workflow-track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+.workflow-stage {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: var(--space-3);
 }
 
-.pipeline-row {
-  display: flex;
-  gap: var(--space-6);
-  padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.pipeline-row:first-child {
-  padding-top: 0;
-}
-
-.pipeline-row:last-child {
-  border-bottom: none;
-}
-
-.pipeline-label {
-  flex: 0 0 140px;
-  font-weight: 600;
-}
-
-.pipeline-text {
+.stage-visual {
   flex: 1;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 108px;
+}
+
+.stage-caption {
+  font-size: 0.78rem;
   color: var(--color-text-muted);
-  max-width: 62ch;
+  text-align: center;
+}
+
+.workflow-connector {
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--color-text-faint);
+  font-size: 1rem;
+}
+
+.extract-visual {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.extract-line {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border);
+}
+
+.extract-highlight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  white-space: nowrap;
+}
+
+.extract-highlight-label {
+  color: var(--color-primary);
+}
+
+.extract-highlight-value {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.classify-visual {
+  align-items: flex-start;
+}
+
+.doc-type-chip {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.mini-confidence-track {
+  width: 100%;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mini-confidence-fill {
+  height: 100%;
+  width: 96%;
+  background: var(--color-accent);
+  border-radius: 999px;
+}
+
+.mini-confidence-label {
+  font-size: 0.72rem;
+  color: var(--color-text-faint);
+}
+
+.mini-metric-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.mini-metric-value {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.insight-visual {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: var(--space-3);
 }
 
 .privacy-band {
@@ -295,13 +426,17 @@ function goToPrivacy() {
     display: none;
   }
 
-  .pipeline-row {
-    flex-direction: column;
-    gap: var(--space-1);
+  .workflow-panel {
+    padding: var(--space-5) var(--space-4);
   }
 
-  .pipeline-label {
-    flex: none;
+  .workflow-track {
+    flex-direction: column;
+  }
+
+  .workflow-connector {
+    transform: rotate(90deg);
+    align-self: center;
   }
 
   .privacy-band {
