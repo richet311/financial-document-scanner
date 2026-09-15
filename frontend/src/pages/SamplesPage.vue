@@ -1,28 +1,11 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { SAMPLE_DOCUMENTS } from '../lib/sampleDocuments'
 
 const router = useRouter()
 
-const samples = [
-  {
-    file: 'sample-pay-stub.pdf',
-    title: 'Pay stub',
-    text: 'A synthetic pay stub with gross income, deductions, and net pay.',
-  },
-  {
-    file: 'sample-bank-statement.pdf',
-    title: 'Bank statement',
-    text: 'A synthetic account statement with opening balance, deposits, withdrawals, and balance.',
-  },
-  {
-    file: 'sample-budget-sheet.pdf',
-    title: 'Budget sheet',
-    text: 'A synthetic monthly budget with net pay and a breakdown of expenses.',
-  },
-]
-
-function goToScan() {
-  router.push('/scan')
+function useSample(doc) {
+  router.push({ path: '/scan', query: { sample: doc.key } })
 }
 </script>
 
@@ -31,19 +14,29 @@ function goToScan() {
     <header class="page-header">
       <h1>Sample documents</h1>
       <p class="page-subtitle">
-        No real financial document required. Download one of these synthetic
-        PDFs and upload it on the Scan page to see the pipeline run end to
-        end.
+        No real financial document required. Use one of these synthetic
+        documents to see the pipeline run end to end.
       </p>
     </header>
 
     <div class="samples-grid">
-      <div v-for="sample in samples" :key="sample.file" class="sample-card">
-        <h2>{{ sample.title }}</h2>
-        <p>{{ sample.text }}</p>
+      <div v-for="doc in SAMPLE_DOCUMENTS" :key="doc.key" class="sample-card">
+        <div class="doc-thumb">
+          <span class="doc-thumb-tag">PDF</span>
+          <span class="doc-thumb-line" style="width: 70%"></span>
+          <span class="doc-thumb-line" style="width: 90%"></span>
+          <span class="doc-thumb-line" style="width: 55%"></span>
+          <span class="doc-thumb-line" style="width: 80%"></span>
+        </div>
+
+        <div class="sample-info">
+          <h2>{{ doc.title }}</h2>
+          <p>{{ doc.description }}</p>
+        </div>
+
         <div class="sample-actions">
-          <a class="btn btn-secondary" :href="`/samples/${sample.file}`" download>Download PDF</a>
-          <button class="btn btn-primary" @click="goToScan">Go to Scan</button>
+          <button class="btn btn-primary" @click="useSample(doc)">Use sample</button>
+          <a class="download-link" :href="`/samples/${doc.file}`" download>Download</a>
         </div>
       </div>
     </div>
@@ -57,10 +50,14 @@ function goToScan() {
 </template>
 
 <style scoped>
+.samples-page {
+  max-width: 780px;
+}
+
 .samples-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
   margin-bottom: var(--space-5);
 }
 
@@ -70,25 +67,74 @@ function goToScan() {
   gap: var(--space-3);
 }
 
-.sample-card h2 {
-  font-size: 1.02rem;
-  color: var(--color-primary);
+.doc-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  justify-content: center;
 }
 
-.sample-card p {
-  font-size: 0.88rem;
+.doc-thumb-tag {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-text-faint);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.doc-thumb-line {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-muted);
+}
+
+.sample-info h2 {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-1);
+}
+
+.sample-info p {
+  font-size: 0.83rem;
   color: var(--color-text-muted);
-  flex: 1;
 }
 
 .sample-actions {
   display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.download-link {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.download-link:hover {
+  color: var(--color-text);
+  text-decoration: underline;
 }
 
 .note {
   font-size: 0.8rem;
   color: var(--color-text-faint);
+}
+
+@media (max-width: 700px) {
+  .samples-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

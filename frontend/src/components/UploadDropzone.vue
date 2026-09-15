@@ -29,7 +29,6 @@ function onDrop(event) {
     @dragover.prevent="isDragging = true"
     @dragleave.prevent="isDragging = false"
     @drop.prevent="onDrop"
-    @click="pickFile"
   >
     <input
       ref="fileInput"
@@ -45,8 +44,9 @@ function onDrop(event) {
         <path d="M9.5 15.5 12 13l2.5 2.5" />
       </svg>
     </div>
-    <p class="dropzone-title">Drop a document here, or click to browse</p>
-    <p class="dropzone-hint">PDF, PNG, or JPEG. Never stored, processed in memory only</p>
+    <p class="dropzone-title">Drag and drop a document, or choose a file</p>
+    <button type="button" class="btn btn-secondary" @click="pickFile">Choose file</button>
+    <p class="dropzone-meta">Supports PDF, PNG, JPEG &middot; Max 10 MB</p>
   </div>
 </template>
 
@@ -56,12 +56,10 @@ function onDrop(event) {
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   text-align: center;
-  cursor: pointer;
   background: var(--color-surface-muted);
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.dropzone:hover,
 .dropzone.dragging {
   border-color: var(--color-primary);
   background: var(--color-primary-soft);
@@ -78,17 +76,18 @@ function onDrop(event) {
 }
 
 .dropzone-icon svg {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 
 .dropzone-title {
-  font-weight: 500;
-  margin-bottom: var(--space-1);
+  font-size: 0.92rem;
+  margin-bottom: var(--space-4);
 }
 
-.dropzone-hint {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
+.dropzone-meta {
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+  margin-top: var(--space-3);
 }
 </style>
