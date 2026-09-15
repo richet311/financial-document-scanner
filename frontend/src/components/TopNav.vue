@@ -1,5 +1,14 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import ApiStatus from './ApiStatus.vue'
+import { authStore, signOut } from '../store/auth'
+
+const router = useRouter()
+
+async function onSignOut() {
+  await signOut()
+  router.push('/')
+}
 </script>
 
 <template>
@@ -14,11 +23,19 @@ import ApiStatus from './ApiStatus.vue'
         <RouterLink to="/scan" class="nav-link" exact-active-class="nav-link-active">Scan Document</RouterLink>
         <RouterLink to="/dashboard" class="nav-link" exact-active-class="nav-link-active">Dashboard</RouterLink>
         <RouterLink to="/samples" class="nav-link" exact-active-class="nav-link-active">Sample Documents</RouterLink>
-        <RouterLink to="/security" class="nav-link" exact-active-class="nav-link-active">Security</RouterLink>
-        <RouterLink to="/about" class="nav-link" exact-active-class="nav-link-active">About</RouterLink>
+        <RouterLink to="/privacy" class="nav-link" exact-active-class="nav-link-active">Privacy</RouterLink>
+        <RouterLink to="/terms" class="nav-link" exact-active-class="nav-link-active">Terms</RouterLink>
       </nav>
 
       <ApiStatus class="topbar-status" />
+
+      <div class="auth-area">
+        <template v-if="authStore.user">
+          <span class="account-email">{{ authStore.user.email }}</span>
+          <button class="btn btn-secondary" @click="onSignOut">Sign out</button>
+        </template>
+        <RouterLink v-else to="/login" class="btn btn-primary">Sign in</RouterLink>
+      </div>
     </div>
   </header>
 </template>
@@ -38,7 +55,7 @@ import ApiStatus from './ApiStatus.vue'
   padding: var(--space-3) var(--space-6);
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .brand {
@@ -76,15 +93,35 @@ import ApiStatus from './ApiStatus.vue'
 }
 
 .nav-link-active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .topbar-status {
   white-space: nowrap;
 }
 
-@media (max-width: 860px) {
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  white-space: nowrap;
+}
+
+.account-email {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-area .btn {
+  padding: var(--space-1) var(--space-4);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 960px) {
   .topbar-inner {
     flex-wrap: wrap;
     row-gap: var(--space-3);

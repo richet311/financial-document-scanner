@@ -1,29 +1,41 @@
 import { reactive } from 'vue'
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+import { supabase } from '../lib/supabaseClient'
 
 export const authStore = reactive({
-  token: '',
-  username: '',
+  session: null,
+  user: null,
+  loading: true,
 })
 
-export async function login(username, password) {
-  const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+supabase.auth
+  .getSession()
+  .then(({ data }) => {
+    authStore.session = data.session
+    authStore.user = data.session?.user ?? null
   })
-  const data = await response.json()
+  .catch((err) => {
+    console.error('Could not reach Supabase for the current session:', err.message)
+  })
+  .finally(() => {
+    authStore.loading = false
+  })
 
-  if (!response.ok) {
-    throw new Error(data.detail || 'Login failed.')
-  }
+supabase.auth.onAuthStateChange((_event, session) => {
+  authStore.session = session
+  authStore.user = session?.user ?? null
+  authStore.loading = false
+})
 
-  authStore.token = data.access_token
-  authStore.username = username
+export async function signUp(email, password) {
+  const { error } = await supabase.auth.signUp({ email, password })
+  if (error) throw new Error(error.message)
 }
 
-export function logout() {
-  authStore.token = ''
-  authStore.username = ''
+export async function signIn(email, password) {
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) throw new Error(error.message)
+}
+
+export async function signOut() {
+  await supabase.auth.signOut()
 }
