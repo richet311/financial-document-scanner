@@ -92,7 +92,7 @@ const ICONS = {
     <div v-if="!authStore.token" class="card login-card">
       <h2>Demo login</h2>
       <p class="hint">
-        Illustrates a JWT-protected route — a single hardcoded credential
+        Illustrates a JWT-protected route: a single hardcoded credential
         pair, not a real user system.
       </p>
       <form class="login-form" @submit.prevent="onLogin">
@@ -181,20 +181,6 @@ const ICONS = {
 </template>
 
 <style scoped>
-.page-header {
-  margin-bottom: var(--space-5);
-}
-
-.page-header h1 {
-  font-size: 1.6rem;
-  margin-bottom: var(--space-2);
-}
-
-.page-subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
 .login-card {
   padding: var(--space-5);
   max-width: 360px;

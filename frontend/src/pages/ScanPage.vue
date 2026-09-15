@@ -73,25 +73,6 @@ async function submitUpload() {
   flex-direction: column;
 }
 
-.page-header {
-  margin-bottom: var(--space-5);
-}
-
-.page-header h1 {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.7rem;
-  color: var(--color-primary);
-  margin-bottom: var(--space-2);
-}
-
-.page-subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  max-width: 60ch;
-}
-
 .status-line {
   margin-top: var(--space-4);
   font-size: 0.88rem;

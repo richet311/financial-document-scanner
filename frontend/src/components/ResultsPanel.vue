@@ -135,7 +135,6 @@ function formatFieldName(key) {
 
 .field-tile {
   background: var(--color-surface-muted);
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
 }
@@ -163,7 +162,6 @@ function formatFieldName(key) {
   padding: var(--space-3);
   border-radius: var(--radius-sm);
   font-size: 0.88rem;
-  border: 1px solid transparent;
 }
 
 .insight-success {
@@ -179,7 +177,6 @@ function formatFieldName(key) {
 .insight-neutral {
   background: var(--color-surface-muted);
   color: var(--color-text-muted);
-  border-color: var(--color-border);
 }
 
 .raw-text summary {

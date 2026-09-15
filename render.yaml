@@ -1,12 +1,12 @@
 # Render Blueprint for Financial Document Scanner. Deploy via Render's
 # "New +" -> "Blueprint"
 # and point it at this repo. Verify these keys against Render's current
-# Blueprint docs before relying on this — the schema has changed over time
+# Blueprint docs before relying on this. The schema has changed over time
 # and this hasn't been run against a live Render account.
 #
 # After the first deploy, both services get an onrender.com URL. Set
 # ALLOWED_ORIGINS (api service) and VITE_API_BASE_URL (frontend service) to
-# each other's real URL, then redeploy — they're left unset here (sync: false)
+# each other's real URL, then redeploy. They're left unset here (sync: false)
 # because neither URL is known until after the first deploy.
 services:
   - type: web

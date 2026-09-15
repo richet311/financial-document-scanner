@@ -46,7 +46,7 @@ function onDrop(event) {
       </svg>
     </div>
     <p class="dropzone-title">Drop a document here, or click to browse</p>
-    <p class="dropzone-hint">PDF, PNG, or JPEG — never stored, processed in memory only</p>
+    <p class="dropzone-hint">PDF, PNG, or JPEG. Never stored, processed in memory only</p>
   </div>
 </template>
 

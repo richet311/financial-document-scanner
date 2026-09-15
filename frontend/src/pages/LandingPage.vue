@@ -3,6 +3,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+function goToSecurity() {
+  router.push('/security')
+}
+
 const ICONS = {
   document:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2" /><line x1="8" y1="8" x2="16" y2="8" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="8" y1="16" x2="13" y2="16" /></svg>',
@@ -59,6 +63,12 @@ const steps = [
   },
 ]
 
+const securityPoints = [
+  'Every upload is checked by size and real file signature, not just its extension.',
+  'Rate limiting on every API route, keyed by client IP.',
+  'The original file is never stored; only derived insights are kept, in memory.',
+]
+
 function goToScan() {
   router.push('/scan')
 }
@@ -67,47 +77,55 @@ function goToScan() {
 <template>
   <div class="landing">
     <section class="hero">
-      <span class="hero-eyebrow">Document intelligence</span>
-      <h1>Turn financial documents into clear, actionable insights</h1>
-      <p class="hero-subtitle">
-        Upload a pay stub, bank statement, or budget sheet and see extraction,
-        classification, and budgeting analysis run end to end &mdash; without
-        it ever touching a real bank account.
-      </p>
-      <button class="btn btn-primary hero-cta" @click="goToScan">Scan a document</button>
+      <div class="hero-content">
+        <h1>Turn financial documents into clear, actionable insights</h1>
+        <p class="hero-subtitle">
+          Upload a pay stub, bank statement, or budget sheet and see extraction,
+          classification, and budgeting analysis run end to end, without
+          it ever touching a real bank account.
+        </p>
+        <button class="btn btn-primary hero-cta" @click="goToScan">Scan a document</button>
 
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-value">PDF · PNG · JPEG</span>
-          <span class="hero-stat-label">Supported formats</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">OCR + ML</span>
-          <span class="hero-stat-label">Extraction pipeline</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">In-memory only</span>
-          <span class="hero-stat-label">File handling</span>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-value">PDF · PNG · JPEG</span>
+            <span class="hero-stat-label">Supported formats</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">OCR + ML</span>
+            <span class="hero-stat-label">Extraction pipeline</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">In-memory only</span>
+            <span class="hero-stat-label">File handling</span>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section class="steps-section">
-      <h2 class="section-heading">How it works</h2>
-      <div class="steps">
-        <div v-for="(step, index) in steps" :key="step.title" class="step">
-          <div class="step-number">{{ index + 1 }}</div>
-          <span class="step-icon icon" v-html="ICONS[step.icon]"></span>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.text }}</p>
-        </div>
+      <div class="hero-visual">
+        <svg class="hero-illustration" viewBox="0 0 220 190" fill="none">
+          <rect x="30" y="24" width="108" height="138" rx="8" transform="rotate(-8 30 24)" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" />
+          <rect x="46" y="18" width="108" height="138" rx="8" transform="rotate(-2 46 18)" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.32)" stroke-width="1.5" />
+          <rect x="58" y="16" width="108" height="138" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" />
+          <line x1="74" y1="44" x2="148" y2="44" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" />
+          <line x1="74" y1="60" x2="148" y2="60" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" />
+          <line x1="74" y1="76" x2="120" y2="76" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" />
+          <rect x="58" y="96" width="108" height="10" rx="5" fill="var(--color-accent)" />
+          <rect x="182" y="118" width="10" height="32" rx="3" fill="var(--color-accent)" opacity="0.85" />
+          <rect x="198" y="98" width="10" height="52" rx="3" fill="var(--color-accent)" opacity="0.55" />
+          <rect x="166" y="134" width="10" height="16" rx="3" fill="var(--color-accent)" opacity="0.55" />
+        </svg>
+        <span class="hero-visual-caption">Document intelligence pipeline</span>
       </div>
     </section>
 
     <section class="capabilities-section">
-      <h2 class="section-heading">Capabilities</h2>
+      <h2 class="section-heading">Capabilities of this scanner for finance</h2>
+      <p class="section-subtitle">
+        A small, self-contained pipeline that goes from a raw document to a
+        classified type and plain-language budgeting insight.
+      </p>
       <div class="capabilities">
-        <div v-for="capability in capabilities" :key="capability.title" class="capability-card card">
+        <div v-for="capability in capabilities" :key="capability.title" class="capability-card">
           <span class="capability-icon icon" v-html="ICONS[capability.icon]"></span>
           <h3>{{ capability.title }}</h3>
           <p>{{ capability.text }}</p>
@@ -115,10 +133,55 @@ function goToScan() {
       </div>
     </section>
 
+    <section class="spotlight">
+      <div class="spotlight-visual">
+        <svg class="spotlight-illustration" viewBox="0 0 200 190" fill="none">
+          <circle cx="100" cy="96" r="82" stroke="var(--color-border)" stroke-width="1.5" stroke-dasharray="3 7" />
+          <circle cx="38" cy="56" r="5" fill="var(--color-accent)" opacity="0.3" />
+          <circle cx="164" cy="66" r="4" fill="var(--color-accent)" opacity="0.5" />
+          <circle cx="150" cy="144" r="6" fill="var(--color-accent)" opacity="0.28" />
+          <path
+            d="M100 30 L150 48 V92 C150 128 128 152 100 164 C72 152 50 128 50 92 V48 Z"
+            fill="var(--color-accent-soft)"
+            stroke="var(--color-accent)"
+            stroke-width="2.5"
+            stroke-linejoin="round"
+          />
+          <path d="M78 96 L94 112 L124 78" stroke="var(--color-accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div class="spotlight-content">
+        <span class="accent-bar"></span>
+        <h2>Built with privacy and security in mind</h2>
+        <p class="spotlight-intro">
+          This is a portfolio project, so it treats security as a first-class
+          feature rather than an afterthought.
+        </p>
+        <ul class="spotlight-list">
+          <li v-for="point in securityPoints" :key="point">{{ point }}</li>
+        </ul>
+        <button class="btn btn-secondary spotlight-link" @click="goToSecurity">
+          See the full security approach
+        </button>
+      </div>
+    </section>
+
+    <section class="steps-section">
+      <h2 class="section-heading">How it works</h2>
+      <div class="steps">
+        <div v-for="(step, index) in steps" :key="step.title" class="step">
+          <div class="step-number">{{ String(index + 1).padStart(2, '0') }}</div>
+          <span class="step-icon icon" v-html="ICONS[step.icon]"></span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </div>
+      </div>
+    </section>
+
     <section class="cta-banner">
       <div>
         <h2>Ready to see it in action?</h2>
-        <p>Try it with a sample document &mdash; nothing is stored, no account required.</p>
+        <p>Try it with a sample document. Nothing is stored, no account required.</p>
       </div>
       <button class="btn btn-primary" @click="goToScan">Scan a document</button>
     </section>
@@ -133,31 +196,21 @@ function goToScan() {
 }
 
 .hero {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-7) var(--space-6);
-  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
 }
 
-.hero-eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  margin-bottom: var(--space-3);
+.hero-content {
+  flex: 1 1 56%;
+  padding: var(--space-4) 0;
 }
 
 .hero h1 {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 2.6rem;
-  max-width: 20ch;
+  font-size: 2.3rem;
+  max-width: 18ch;
   margin-bottom: var(--space-4);
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .hero-subtitle {
@@ -183,7 +236,7 @@ function goToScan() {
 }
 
 .hero-stat-value {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
 }
 
@@ -192,74 +245,61 @@ function goToScan() {
   color: var(--color-text-muted);
 }
 
-.section-heading {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-faint);
-  margin-bottom: var(--space-4);
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-5);
-}
-
-.step {
+.hero-visual {
   position: relative;
-  padding: var(--space-5);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  flex: 1 1 44%;
+  background: linear-gradient(150deg, #262626 0%, #141414 100%);
   border-radius: var(--radius-lg);
-}
-
-.step-number {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.3rem;
-  color: var(--color-border);
-}
-
-.step-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  overflow: hidden;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-3);
+  min-height: 280px;
 }
 
-.step-icon :deep(svg) {
-  width: 18px;
-  height: 18px;
+.hero-visual::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-accent);
 }
 
-.step h3 {
-  font-size: 0.98rem;
+.hero-illustration {
+  width: 220px;
+  height: 190px;
+}
+
+.hero-visual-caption {
+  position: absolute;
+  left: var(--space-5);
+  bottom: var(--space-5);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.section-heading {
+  font-size: 1.5rem;
+  color: var(--color-text);
   margin-bottom: var(--space-2);
 }
 
-.step p {
-  font-size: 0.85rem;
+.section-subtitle {
   color: var(--color-text-muted);
+  max-width: 64ch;
+  margin-bottom: var(--space-5);
 }
 
 .capabilities {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 }
 
-.capability-card {
-  padding: var(--space-5);
-}
 
 .capability-icon {
   width: 34px;
@@ -278,11 +318,104 @@ function goToScan() {
 }
 
 .capability-card h3 {
-  font-size: 0.98rem;
+  font-size: 1.02rem;
+  color: var(--color-accent);
   margin-bottom: var(--space-2);
 }
 
 .capability-card p {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.spotlight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.spotlight-visual {
+  flex: 1 1 34%;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.spotlight-illustration {
+  width: 170px;
+  height: 162px;
+}
+
+.spotlight-content {
+  flex: 1 1 66%;
+}
+
+.spotlight-content h2 {
+  font-size: 1.4rem;
+  margin-bottom: var(--space-3);
+}
+
+.spotlight-intro {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+  max-width: 60ch;
+}
+
+.spotlight-list {
+  margin: 0 0 var(--space-4);
+  padding-left: 1.1rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.spotlight-link {
+  align-self: flex-start;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-5);
+}
+
+
+.step-number {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-2);
+}
+
+.step-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+}
+
+.step-icon :deep(svg) {
+  width: 18px;
+  height: 18px;
+}
+
+.step h3 {
+  font-size: 0.98rem;
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+
+.step p {
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }
@@ -290,7 +423,7 @@ function goToScan() {
 .cta-banner {
   background: var(--color-primary);
   color: white;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: var(--space-6);
   display: flex;
   align-items: center;
@@ -300,15 +433,31 @@ function goToScan() {
 }
 
 .cta-banner h2 {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: var(--space-2);
 }
 
 .cta-banner p {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 0.9rem;
+}
+
+
+@media (max-width: 760px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero-visual {
+    min-height: 160px;
+  }
+
+  .capabilities {
+    grid-template-columns: 1fr;
+  }
+
+  .spotlight {
+    flex-direction: column;
+  }
 }
 </style>
