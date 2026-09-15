@@ -1,42 +1,46 @@
 <script setup>
 import { computed, ref, watchEffect } from 'vue'
-import { authStore, login, logout } from '../store/auth'
+import { supabase } from '../lib/supabaseClient'
+import { authStore } from '../store/auth'
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const DOCUMENT_TYPES = ['pay_stub', 'bank_statement', 'budget_sheet']
 
-const username = ref('')
-const password = ref('')
-const loginError = ref('')
-const loggingIn = ref(false)
-
-const history = ref([])
-const loadError = ref('')
-const loading = ref(false)
-
-async function onLogin() {
-  loginError.value = ''
-  loggingIn.value = true
-  try {
-    await login(username.value, password.value)
-    password.value = ''
-  } catch (err) {
-    loginError.value = err.message
-  } finally {
-    loggingIn.value = false
-  }
+function isoDate(date) {
+  return date.toISOString().slice(0, 10)
 }
 
-async function loadHistory() {
-  if (!authStore.token) return
+const today = new Date()
+const thirtyDaysAgo = new Date(today)
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+const startDate = ref(isoDate(thirtyDaysAgo))
+const endDate = ref(isoDate(today))
+const typeFilter = ref('all')
+
+const scans = ref([])
+const loading = ref(false)
+const loadError = ref('')
+
+async function loadScans() {
+  if (!authStore.user) return
+
   loading.value = true
   loadError.value = ''
   try {
-    const response = await fetch(`${apiBaseUrl}/api/documents/history`, {
-      headers: { Authorization: `Bearer ${authStore.token}` },
-    })
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.detail || 'Could not load history.')
-    history.value = data.history
+    let query = supabase
+      .from('scans')
+      .select('*')
+      .gte('created_at', `${startDate.value}T00:00:00.000Z`)
+      .lte('created_at', `${endDate.value}T23:59:59.999Z`)
+      .order('created_at', { ascending: false })
+
+    if (typeFilter.value !== 'all') {
+      query = query.eq('document_type', typeFilter.value)
+    }
+
+    const { data, error } = await query
+    if (error) throw new Error(error.message)
+    scans.value = data ?? []
   } catch (err) {
     loadError.value = err.message
   } finally {
@@ -45,40 +49,78 @@ async function loadHistory() {
 }
 
 watchEffect(() => {
-  if (authStore.token) loadHistory()
+  if (authStore.user) loadScans()
 })
 
-const totalScans = computed(() => history.value.length)
+const totalScans = computed(() => scans.value.length)
 
 const typeCounts = computed(() => {
   const counts = {}
-  for (const item of history.value) {
+  for (const item of scans.value) {
     const type = item.document_type || 'unknown'
     counts[type] = (counts[type] || 0) + 1
   }
   return counts
 })
 
-const maxTypeCount = computed(() => Math.max(1, ...Object.values(typeCounts.value)))
-
 const averageConfidence = computed(() => {
-  const withConfidence = history.value.filter((item) => item.confidence != null)
+  const withConfidence = scans.value.filter((item) => item.confidence != null)
   if (!withConfidence.length) return null
   const sum = withConfidence.reduce((total, item) => total + item.confidence, 0)
   return (sum / withConfidence.length) * 100
+})
+
+const DONUT_COLORS = ['#0b419e', '#ff8000', '#71b603', '#b11616', '#9b9fa6']
+
+const donutSegments = computed(() => {
+  const total = totalScans.value
+  if (!total) return []
+
+  const radius = 60
+  const circumference = 2 * Math.PI * radius
+  let cumulative = 0
+
+  return Object.entries(typeCounts.value).map(([type, count], index) => {
+    const fraction = count / total
+    const dash = fraction * circumference
+    const segment = {
+      type,
+      count,
+      percentage: fraction * 100,
+      color: DONUT_COLORS[index % DONUT_COLORS.length],
+      dasharray: `${dash} ${circumference - dash}`,
+      dashoffset: -cumulative * circumference,
+    }
+    cumulative += fraction
+    return segment
+  })
+})
+
+const dailyCounts = computed(() => {
+  const buckets = {}
+  for (const item of scans.value) {
+    const day = item.created_at.slice(0, 10)
+    buckets[day] = (buckets[day] || 0) + 1
+  }
+  const days = Object.keys(buckets).sort()
+  const recentDays = days.slice(-30)
+  const maxCount = Math.max(1, ...recentDays.map((day) => buckets[day]))
+  return recentDays.map((day) => ({
+    day,
+    count: buckets[day],
+    heightPercent: (buckets[day] / maxCount) * 100,
+  }))
 })
 
 function formatTime(isoString) {
   return new Date(isoString).toLocaleString()
 }
 
-const ICONS = {
-  document:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2" /><line x1="8" y1="8" x2="16" y2="8" /><line x1="8" y1="12" x2="16" y2="12" /><line x1="8" y1="16" x2="13" y2="16" /></svg>',
-  layers:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 L21 8 L12 13 L3 8 Z" /><path d="M3 13 L12 18 L21 13" /><path d="M3 17.5 L12 22.5 L21 17.5" /></svg>',
-  chart:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20" /><rect x="6" y="13" width="3" height="7" fill="currentColor" stroke="none" /><rect x="11" y="9" width="3" height="11" fill="currentColor" stroke="none" /><rect x="16" y="5" width="3" height="15" fill="currentColor" stroke="none" /></svg>',
+function formatDay(isoDay) {
+  return new Date(`${isoDay}T00:00:00`).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
 }
 </script>
 
@@ -86,152 +128,149 @@ const ICONS = {
   <div class="dashboard">
     <header class="page-header">
       <h1>Dashboard</h1>
-      <p class="page-subtitle">Session analysis history, behind a demo login.</p>
+      <p class="page-subtitle">Your saved scan history and reports.</p>
     </header>
 
-    <div v-if="!authStore.token" class="card login-card">
-      <h2>Demo login</h2>
-      <p class="hint">
-        Illustrates a JWT-protected route: a single hardcoded credential
-        pair, not a real user system.
-      </p>
-      <form class="login-form" @submit.prevent="onLogin">
-        <input v-model="username" type="text" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button type="submit" class="btn btn-primary" :disabled="loggingIn">
-          {{ loggingIn ? 'Signing in…' : 'Sign in' }}
-        </button>
-      </form>
-      <p v-if="loginError" class="error">{{ loginError }}</p>
+    <div class="filters">
+      <label>
+        From
+        <input v-model="startDate" type="date" />
+      </label>
+      <label>
+        To
+        <input v-model="endDate" type="date" />
+      </label>
+      <label>
+        Document type
+        <select v-model="typeFilter">
+          <option value="all">All types</option>
+          <option v-for="type in DOCUMENT_TYPES" :key="type" :value="type">
+            {{ type.replaceAll('_', ' ') }}
+          </option>
+        </select>
+      </label>
+      <button class="btn btn-secondary" :disabled="loading" @click="loadScans">
+        {{ loading ? 'Refreshing...' : 'Refresh' }}
+      </button>
     </div>
 
-    <template v-else>
-      <div class="toolbar">
-        <span class="signed-in-as">Signed in as <strong>{{ authStore.username }}</strong></span>
-        <div class="toolbar-actions">
-          <button class="btn btn-secondary" :disabled="loading" @click="loadHistory">
-            {{ loading ? 'Refreshing…' : 'Refresh' }}
-          </button>
-          <button class="btn btn-secondary" @click="logout">Sign out</button>
+    <p v-if="loadError" class="error">{{ loadError }}</p>
+
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <div class="stat-label">Total scans</div>
+        <div class="stat-value">{{ totalScans }}</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Document types seen</div>
+        <div class="stat-value">{{ Object.keys(typeCounts).length }}</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Avg. classifier confidence</div>
+        <div class="stat-value">
+          {{ averageConfidence != null ? averageConfidence.toFixed(1) + '%' : '—' }}
         </div>
       </div>
+    </div>
 
-      <div class="stats-grid">
-        <div class="card stat-card">
-          <span class="stat-icon icon" v-html="ICONS.document"></span>
-          <div>
-            <div class="stat-label">Total scans</div>
-            <div class="stat-value">{{ totalScans }}</div>
-          </div>
-        </div>
-        <div class="card stat-card">
-          <span class="stat-icon icon" v-html="ICONS.layers"></span>
-          <div>
-            <div class="stat-label">Document types seen</div>
-            <div class="stat-value">{{ Object.keys(typeCounts).length }}</div>
-          </div>
-        </div>
-        <div class="card stat-card">
-          <span class="stat-icon icon" v-html="ICONS.chart"></span>
-          <div>
-            <div class="stat-label">Avg. classifier confidence</div>
-            <div class="stat-value">
-              {{ averageConfidence != null ? averageConfidence.toFixed(1) + '%' : '—' }}
+    <div class="charts-row" v-if="totalScans">
+      <div class="card chart-card">
+        <h2>Scans by day</h2>
+        <div class="bar-chart">
+          <div v-for="bucket in dailyCounts" :key="bucket.day" class="bar-column">
+            <div class="bar-track">
+              <div class="bar-fill" :style="{ height: bucket.heightPercent + '%' }"></div>
             </div>
+            <span class="bar-day-label">{{ formatDay(bucket.day) }}</span>
           </div>
         </div>
       </div>
 
-      <div class="card breakdown-card" v-if="totalScans">
+      <div class="card chart-card donut-card">
         <h2>Breakdown by document type</h2>
-        <div class="bar-row" v-for="(count, type) in typeCounts" :key="type">
-          <span class="bar-label">{{ type.replaceAll('_', ' ') }}</span>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{ width: (count / maxTypeCount) * 100 + '%' }"></div>
-          </div>
-          <span class="bar-count">{{ count }}</span>
+        <div class="donut-row">
+          <svg viewBox="0 0 140 140" class="donut">
+            <circle
+              v-for="segment in donutSegments"
+              :key="segment.type"
+              cx="70"
+              cy="70"
+              r="60"
+              fill="none"
+              :stroke="segment.color"
+              stroke-width="20"
+              :stroke-dasharray="segment.dasharray"
+              :stroke-dashoffset="segment.dashoffset"
+              transform="rotate(-90 70 70)"
+            />
+          </svg>
+          <ul class="donut-legend">
+            <li v-for="segment in donutSegments" :key="segment.type">
+              <span class="legend-swatch" :style="{ background: segment.color }"></span>
+              {{ segment.type.replaceAll('_', ' ') }}
+              <strong>{{ segment.percentage.toFixed(0) }}%</strong>
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <div class="card table-card">
-        <h2>Recent analyses</h2>
-        <p v-if="loadError" class="error">{{ loadError }}</p>
-        <p v-else-if="!history.length" class="empty">No analyses recorded yet this session.</p>
-        <table v-else class="history-table">
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Type</th>
-              <th>Confidence</th>
-              <th>Analyzed</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in history" :key="index">
-              <td>{{ item.filename }}</td>
-              <td class="doc-type-cell">{{ (item.document_type || 'unknown').replaceAll('_', ' ') }}</td>
-              <td>{{ item.confidence != null ? (item.confidence * 100).toFixed(1) + '%' : '—' }}</td>
-              <td>{{ formatTime(item.analyzed_at) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </template>
+    <div class="card table-card">
+      <h2>Scan history</h2>
+      <p v-if="!scans.length && !loading" class="empty">No scans in this range yet.</p>
+      <table v-else-if="scans.length" class="history-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Type</th>
+            <th>Confidence</th>
+            <th>Analyzed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in scans" :key="item.id">
+            <td>{{ item.filename }}</td>
+            <td class="doc-type-cell">{{ (item.document_type || 'unknown').replaceAll('_', ' ') }}</td>
+            <td>{{ item.confidence != null ? (item.confidence * 100).toFixed(1) + '%' : '—' }}</td>
+            <td>{{ formatTime(item.created_at) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.login-card {
-  padding: var(--space-5);
-  max-width: 360px;
+.filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
 }
 
-.login-card h2 {
-  font-size: 1.05rem;
-  margin-bottom: var(--space-1);
-}
-
-.hint {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-4);
-}
-
-.login-form {
+.filters label {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
 }
 
-.login-form input {
+.filters input,
+.filters select {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   color: var(--color-text);
+  font-size: 0.88rem;
 }
 
 .error {
   color: var(--color-danger);
   font-size: 0.85rem;
-  margin-top: var(--space-3);
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-5);
-}
-
-.signed-in-as {
-  font-size: 0.88rem;
-  color: var(--color-text-muted);
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .stats-grid {
@@ -243,24 +282,6 @@ const ICONS = {
 
 .stat-card {
   padding: var(--space-4);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.stat-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-sm);
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-icon :deep(svg) {
-  width: 18px;
-  height: 18px;
 }
 
 .stat-label {
@@ -274,48 +295,114 @@ const ICONS = {
   font-weight: 700;
 }
 
-.breakdown-card,
-.table-card {
-  padding: var(--space-5);
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
   margin-bottom: var(--space-5);
 }
 
-.breakdown-card h2,
-.table-card h2 {
+.chart-card {
+  padding: var(--space-5);
+}
+
+.chart-card h2 {
   font-size: 1rem;
   margin-bottom: var(--space-4);
 }
 
-.bar-row {
-  display: grid;
-  grid-template-columns: 140px 1fr 32px;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-  font-size: 0.85rem;
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  height: 160px;
+  overflow-x: auto;
 }
 
-.bar-label {
-  text-transform: capitalize;
-  color: var(--color-text-muted);
+.bar-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 20px;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
 }
 
 .bar-track {
-  height: 10px;
+  width: 100%;
+  max-width: 22px;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
   background: var(--color-surface-muted);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .bar-fill {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 999px;
+  width: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-.bar-count {
-  text-align: right;
+.bar-day-label {
+  font-size: 0.68rem;
+  color: var(--color-text-faint);
+  white-space: nowrap;
+}
+
+.donut-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.donut {
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 0.85rem;
   color: var(--color-text-muted);
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-transform: capitalize;
+}
+
+.donut-legend strong {
+  margin-left: auto;
+  color: var(--color-text);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.table-card {
+  padding: var(--space-5);
+}
+
+.table-card h2 {
+  font-size: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .empty {

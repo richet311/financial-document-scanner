@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import UploadDropzone from '../components/UploadDropzone.vue'
 import ResultsPanel from '../components/ResultsPanel.vue'
+import { authStore } from '../store/auth'
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
@@ -28,8 +29,14 @@ async function submitUpload() {
   formData.append('file', selectedFile.value)
 
   try {
+    const headers = {}
+    if (authStore.session) {
+      headers.Authorization = `Bearer ${authStore.session.access_token}`
+    }
+
     const response = await fetch(`${apiBaseUrl}/api/documents/upload`, {
       method: 'POST',
+      headers,
       body: formData,
     })
     const data = await response.json()
@@ -63,6 +70,13 @@ async function submitUpload() {
     <div v-if="submitting" class="status-line">Analyzing document…</div>
     <p v-if="error" class="error">{{ error }}</p>
 
+    <p v-if="result && !authStore.user" class="save-note">
+      Sign in to automatically save results like this one to your account.
+    </p>
+    <p v-else-if="result && result.saved" class="save-note save-note-success">
+      Saved to your account. View it on the Dashboard.
+    </p>
+
     <ResultsPanel v-if="result" :result="result" />
   </div>
 </template>
@@ -83,5 +97,15 @@ async function submitUpload() {
   margin-top: var(--space-4);
   color: var(--color-danger);
   font-size: 0.88rem;
+}
+
+.save-note {
+  margin-top: var(--space-4);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.save-note-success {
+  color: var(--color-success);
 }
 </style>
